@@ -67,7 +67,7 @@ class TaxSituation {
 }
 
 const g_situations = {
-  "married": new TaxSituation(
+  "married_filing_jointly": new TaxSituation(
     // https://www.nerdwallet.com/article/taxes/federal-income-tax-brackets
     income_brackets = [
       new Bracket(0,	0),
@@ -86,7 +86,7 @@ const g_situations = {
       new Bracket(15, 517200),
       new Bracket(20, Infinity),
     ],
-  )
+  ),
 };
 
 class SavedState {
@@ -111,32 +111,35 @@ class TaxOptimizer extends HTMLElement {
   connectedCallback() {
     const rootDiv = document.getElementById("tax_optimizer_template").content.cloneNode(true);
 
+    // React to window resizing.
     this.prevHeight = window.innerHeight;
     this.prevWidth = window.innerWidth;
     window.addEventListener('resize', this.handleWindowResize.bind(this));
 
-    // Setup input boxes with saved state and event listeners.
-    try {
-      this.savedState = JSON.parse(localStorage.getItem("state"));
-    } catch(e) {
-      localStorage.clear();
-      this.savedState = new SavedState();
-    }
-    for (const inputName of g_inputNames) {
-      rootDiv.querySelector(`#${inputName} input`)
-          .addEventListener('keydown', this.handleKey.bind(this));
+    { // Settings box handling
+      this.settingsExpanded = true;
+      this.settingsHeader = rootDiv.querySelector(".settings > header");
+      this.settingsHeader.addEventListener('click', this.handleSettingsHeaderClick.bind(this));
+      this.settingsApplyButton = rootDiv.querySelector(".settings #apply button");
+      this.settingsApplyButton.addEventListener('click', this.handleApplyClick.bind(this));
 
-      if (this.savedState?.[inputName] != null) {
-        rootDiv.querySelector(`#${inputName} input`).value =
-            this.savedState[inputName];
+      // Setup input boxes with saved state and event listeners.
+      try {
+        this.savedState = JSON.parse(localStorage.getItem("state"));
+      } catch(e) {
+        localStorage.clear();
+        this.savedState = new SavedState();
+      }
+      for (const inputName of g_inputNames) {
+        rootDiv.querySelector(`#${inputName} input`)
+            .addEventListener('keydown', this.handleKey.bind(this));
+
+        if (this.savedState?.[inputName] != null) {
+          rootDiv.querySelector(`#${inputName} input`).value =
+              this.savedState[inputName];
+        }
       }
     }
-
-    this.settingsExpanded = true;
-    this.settingsHeader = rootDiv.querySelector(".settings > header");
-    this.settingsHeader.addEventListener('click', this.handleSettingsHeaderClick.bind(this));
-    this.settingsApplyButton = rootDiv.querySelector(".settings #apply button");
-    this.settingsApplyButton.addEventListener('click', this.run.bind(this));
 
     this.appendChild(rootDiv);
     this.run();
@@ -153,9 +156,7 @@ class TaxOptimizer extends HTMLElement {
     this.run();
   }
 
-  handleKey(e) {
-    if (e.code != "Enter") { return; }
-
+  handleApplyClick() {
     // Save state to storage.
     const ss = new SavedState();
     for (const inputName of g_inputNames) {
@@ -164,6 +165,10 @@ class TaxOptimizer extends HTMLElement {
     localStorage.setItem("state", JSON.stringify(ss));
 
     this.run();
+  }
+
+  handleKey(e) {
+    if (e.code == "Enter") { this.handleApplyClick(); }
   }
 
   getInput(id) {
@@ -188,7 +193,11 @@ class TaxOptimizer extends HTMLElement {
   run() {
     this.querySelector("#dimOverlay").classList.remove("hidden");
     this.querySelector("#dimOverlay").classList.add("shown");
-    self.scheduler.postTask(this.runAsync.bind(this), {priority: "background"});
+    self.scheduler.postTask(this.runAsync.bind(this), {
+      priority: "background",
+      delay: 10,  // Give time for the "Loading" screen to actuall appear.
+                  // TODO(ux): better solution like web workers.
+    });
   }
 
   runAsync() {
