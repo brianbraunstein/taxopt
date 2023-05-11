@@ -217,7 +217,7 @@ class TaxOptimizer extends HTMLElement {
       hovertemplate: "Income: %{y}<br>" +
                      "Capital Gains: %{x}<br>" +
                      "Effective % Tax: %{z}<br>" +
-                     "extra></extra>",
+                     "<extra></extra>",
       contours: {
         x: { show: true, highlightcolor: "#ffff80" },
         z: { show: true, highlightcolor: "#ffff80" },
@@ -231,7 +231,7 @@ class TaxOptimizer extends HTMLElement {
       hovertemplate: "Income: %{y}<br>" +
                      "Capital Gains: %{x}<br>" +
                      "Take Home: %{z}<br>" +
-                     "extra></extra>",
+                     "<extra></extra>",
     };
     let layout_common = {
       autosize: true,
