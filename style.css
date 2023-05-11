@@ -1,18 +1,20 @@
 
 body {
   padding: 1ex;
+  background-color: #dddddf;
+}
+
+.topLevelCard {
+  position: relative;
+  padding: 2ex;
+  border-radius: 3ex;
+  border: 3px solid gray;
+  margin-bottom: 1ex;
+  background-color: white;
 }
 
 .shown { display: block; }
 .hidden { display: none; }
-
-.taxOptimizer {
-  position: relative;
-  margin: 2ex;
-  padding: 2ex;
-  border-radius: 3ex;
-  border: 3px solid gray;
-}
 
 .taxOptimizer .settings {
   position: sticky;
@@ -59,7 +61,7 @@ body {
 }
 
 .taxOptimizer #dimOverlay main {
-  position: relative;
+  position: sticky;
   font-size: 5em;
   font-weight: bold;
   top: 1em;

@@ -16,7 +16,8 @@
 This tool can help make decisions to optimize taxes.  For example, to determine
 if you should use a Traditional or ROTH IRA. (Currently using data for tax year 2022).
 
-#### Input field meanings (all yearly)
+#### Input field meanings
+(all values are per year)
 - Normal Income
   - Your taxable income such as salary, Traditional IRA distribution, Social
     Security, Short-Term Capital Gains, etc.
@@ -26,14 +27,16 @@ if you should use a Traditional or ROTH IRA. (Currently using data for tax year 
   - The percent of the investments sold that were long term capital gains.  For
     example, if you bought a stock for 100 and sold it for 140, then the ratio
     would be 40/140 = 40%.  (Account for things like loss harvesting here).
-- Spend
-  - The total amount of money you plan to spend on all expenses.  You can ignore
-    this one.  It is just to remove points on the graph that don't make sense
-    because they represent either spending way too little or way too much money.
+- Total Income
+  - This can be ignored but is handy. Only plot points where the sum of normal
+    and investment income fall in this range.  This hides points that are
+    irrelevant because they represent either way too high or too low of income.
 
 </script>
 
-<markdown-inline src-id="upperContent" />
+<div class="topLevelCard">
+  <markdown-inline src-id="upperContent" ></markdown-inline>
+</div>
 
 <template id="tax_optimizer_template">
   <div class="taxOptimizer">
@@ -45,10 +48,11 @@ if you should use a Traditional or ROTH IRA. (Currently using data for tax year 
       <header class="expanded">Settings</header>
 
       <main><table>
-        <tr id="max_income">
-          <td><label>Situation</label></td>
-          <td><select id="situation_select">
-            <option value="married_filing_jointly">Married Filing Jointly</option>
+        <tr id="filing_status">
+          <td><label>Filing Status</label></td>
+          <td><select>
+            <option value="married_filing_jointly" selected>Married Filing Jointly</option>
+            <option value="single">Single</option>
           </select></td>
         </tr>
 
@@ -77,13 +81,13 @@ if you should use a Traditional or ROTH IRA. (Currently using data for tax year 
           <td><input type="text" value="50" /></td>
         </tr>
 
-        <tr id="min_spend">
-          <td><label>Min Spend</label></td>
+        <tr id="min_total_income">
+          <td><label>Min Total Income</label></td>
           <td><input type="text" value="0" /></td>
         </tr>
 
-        <tr id="max_spend">
-          <td><label>Max Spend</label></td>
+        <tr id="max_total_income">
+          <td><label>Max Total Income</label></td>
           <td><input type="text" value="3000000" /></td>
         </tr>
 
@@ -111,7 +115,9 @@ if you should use a Traditional or ROTH IRA. (Currently using data for tax year 
   </div>
 </template>
 
-<tax-optimizer situation="married"></tax-optimizer>
+<div class="topLevelCard">
+  <tax-optimizer></tax-optimizer>
+</div>
 
 </body>
 </html>
