@@ -212,19 +212,21 @@ class TaxOptimizer extends HTMLElement {
       return;
     }
 
+    /*
     let incomeEffectiveRate = {
       x: [],
       y: [],
       type: 'scatter',
       mode: 'lines',
     };
+    */
     let effectiveRateSurface = {
       type: "surface",
       x: [],
       y: [],
       z: [],
-      hovertemplate: "Income: %{y}<br>" +
-                     "Capital Gains: %{x}<br>" +
+      hovertemplate: "Normal Income: %{y}<br>" +
+                     "Investment Income: %{x}<br>" +
                      "Effective % Tax: %{z}<br>" +
                      "<extra></extra>",
       contours: {
@@ -237,8 +239,8 @@ class TaxOptimizer extends HTMLElement {
       x: [],
       y: [],
       z: [],
-      hovertemplate: "Income: %{y}<br>" +
-                     "Capital Gains: %{x}<br>" +
+      hovertemplate: "Normal Income: %{y}<br>" +
+                     "Investment Income: %{x}<br>" +
                      "Take Home: %{z}<br>" +
                      "<extra></extra>",
     };
@@ -246,6 +248,13 @@ class TaxOptimizer extends HTMLElement {
       autosize: true,
       height: Math.min(window.innerWidth * 1.2,
                        window.innerHeight * 0.9),
+      camera: {
+        eye: {
+          x: -1.25,
+          y: -1.25,
+          z: 0.1,
+        },
+      },
     };
 
     const max_income = this.getInput("max_income").value;
@@ -258,7 +267,7 @@ class TaxOptimizer extends HTMLElement {
     const max_spend = this.getInput("max_spend").value;
     const min_spend = Math.min(max_spend, this.getInput("min_spend").value);
 
-    const resolution = 1000.0;
+    const resolution = 800.0;
 
     let income_axis = [];
     let investment_axis = [];
@@ -271,11 +280,10 @@ class TaxOptimizer extends HTMLElement {
          income += (max_income - min_income) / resolution) {
       const income_tax = situation.calculateIncomeTax(income);
 
-      // Preapre effective income tax rate line graph.
-      incomeEffectiveRate.x.push(Math.round(
-          income / 1000) * 1000);
-      incomeEffectiveRate.y.push(Math.round(
-          income_tax / income * 100 * 100) / 100);
+      // Prepare effective income tax rate line graph.
+      //incomeEffectiveRate.x.push(Math.round(income / 1000) * 1000);
+      //incomeEffectiveRate.y.push(Math.round(
+      //    income_tax / income * 100 * 100) / 100);
 
       // Prepare surfaces.
       income_axis.push(income);
@@ -328,21 +336,14 @@ class TaxOptimizer extends HTMLElement {
       [effectiveRateSurface],
       merge(layout_common, {
         title: this.querySelector("#effectiveRateChart > label").innerHTML,
-        scene: {
-          xaxis: { title: "Capital Gains" },
-          yaxis: { title: "Income" },
+        scene: merge(layout_common.scene, {
+          xaxis: { title: "Investment Income" },
+          yaxis: { title: "Normal Income" },
           zaxis: {
             title: "Effective Tax Percentage",
             range: [0, effectiveRateSurface.z.flat().reduce((x,y) => Math.max(x,y))],
           },
-          camera: {
-            eye: {
-              x: -1.25,
-              y: -1.25,
-              z: 0.1,
-            },
-          },
-        }
+        }),
       }),
     );
 
@@ -351,15 +352,15 @@ class TaxOptimizer extends HTMLElement {
       [takeHomeSurface],
       merge(layout_common, {
         title: this.querySelector("#takeHomeChart > label").innerHTML,
-        scene: {
-          xaxis: { title: "Capital Gains" },
-          yaxis: { title: "Income" },
+        scene: merge(layout_common.scene, {
+          xaxis: { title: "Investment Income" },
+          yaxis: { title: "Normal Income" },
           zaxis: {
             title: "Take Home",
             //range: [0, spend * 1.2],
             //rangemode: "tozero",
           },
-        }
+        })
       }),
     );
 
