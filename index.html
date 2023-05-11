@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src='https://cdn.plot.ly/plotly-2.20.0.min.js'></script>
+<link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+
+<script type="text/javascript" src="tax_optimizer.js"></script>
+<script type="text/javascript" src="markdown.js"></script>
+
+<script id="upperContent" type="text/markdown">
+# Tax Optimizer
+
+This tool can help make decisions to optimize taxes.  For example, to determine
+if you should use a Traditional or ROTH IRA.
+
+#### Input field meanings (all yearly)
+- Normal Income
+  - Your taxable income such as salary, Traditional IRA distribution, Social
+    Security, Short-Term Capital Gains, etc.
+- Investment Income
+  - Total amount of investments sold
+- Investment Gain Percentage
+  - The percent of the investments sold that were long term capital gains.  For
+    example, if you bought a stock for 100 and sold it for 140, then the ratio
+    would be 40/140 = 40%.  (Account for things like loss harvesting here).
+- Spend
+  - The total amount of money you plan to spend on all expenses.  You can ignore
+    this one.  It is just to remove points on the graph that don't make sense
+    because they represent either spending way too little or way too much money.
+
+</script>
+
+<markdown-inline src-id="upperContent" />
+
+<template id="tax_optimizer_template">
+  <div class="taxOptimizer">
+    <div id="dimOverlay" class="shown">
+      <main>Loading...</main>
+    </div>
+
+    <div class="settings">
+      <header class="expanded">Settings</header>
+
+      <main><table>
+        <tr id="max_income">
+          <td><label>Situation</label></td>
+          <td><select id="situation_select">
+            <option value="married">Married</option>
+            <option value="single">Single</option>
+          </select></td>
+        </tr>
+
+        <tr id="min_income">
+          <td><label>Min Normal Income</label></td>
+          <td><input type="text" value="0" /></td>
+        </tr>
+
+        <tr id="max_income">
+          <td><label>Max Normal Income</label></td>
+          <td><input type="text" value="3000000" /></td>
+        </tr>
+
+        <tr id="min_investment">
+          <td><label>Min Investment Income</label></td>
+          <td><input type="text" value="0" /></td>
+        </tr>
+
+        <tr id="max_investment">
+          <td><label>Max Investment Income</label></td>
+          <td><input type="text" value="3000000" /></td>
+        </tr>
+
+        <tr id="investment_gain_percent">
+          <td><label>Investment Gain Percent</label></td>
+          <td><input type="text" value="50" /></td>
+        </tr>
+
+        <tr id="min_spend">
+          <td><label>Min Spend</label></td>
+          <td><input type="text" value="0" /></td>
+        </tr>
+
+        <tr id="max_spend">
+          <td><label>Max Spend</label></td>
+          <td><input type="text" value="3000000" /></td>
+        </tr>
+
+        <tr id="apply">
+          <td><button>Apply</button></td>
+        </tr>
+      </table></main>
+    </div>
+
+    <!--div class="chartContainer" id="effectiveIncomeTaxChart">
+      <label>Effective Income Tax Percentage</label>
+      <div class="chart"></div>
+    </div-->
+
+    <div class="chartContainer" id="effectiveRateChart">
+      <label>Effective Total Tax Percentage</label>
+      <div class="chart"></div>
+    </div>
+
+    <div class="chartContainer" id="takeHomeChart">
+      <label>Take Home</label>
+      <div class="chart"></div>
+    </div>
+
+  </div>
+</template>
+
+<tax-optimizer situation="married"></tax-optimizer>
+
+</body>
+</html>
+	
